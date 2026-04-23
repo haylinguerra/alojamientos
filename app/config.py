@@ -9,7 +9,7 @@ class Config:
     _db_user = os.getenv("DB_USER", "").strip()
     _db_password = os.getenv("DB_PASSWORD", "").strip()
     _db_host = os.getenv("DB_HOST", "localhost").strip()
-    _db_port = os.getenv("DB_PORT", "3306").strip()
+    _db_port = os.getenv("DB_PORT", "3307").strip()
     _db_name = os.getenv("DB_NAME", "alojamientos_db").strip()
     SQLALCHEMY_DATABASE_URI = (f"mysql+pymysql://{_db_user}:{_db_password}@{_db_host}:{_db_port}/{_db_name}")
 
