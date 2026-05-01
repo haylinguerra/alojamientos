@@ -4,21 +4,10 @@ from marshmallow import ValidationError
 
 from app.dominios.usuarios.dtos import RegistroUsuarioDTO, ActualizarPerfilDTO
 
-from app.dominios.usuarios.servicios import (
-
-    UsuarioServicio,
-
-    CorreoYaRegistradoError,
-
-    CredencialesInvalidasError,
-
-    UsuarioNoEncontradoError,
-
-)
-
-from app.seguridad import requiere_token
+from app.seguridad import (requiere_token, requiere_admin)
 
 usuarios_bp = Blueprint('usuarios', __name__)
+admin_bp = Blueprint('admin', __name__)
 
 # Variable global que el app factory asignara al crear la app
 
@@ -103,16 +92,6 @@ def obtener_perfil(usuario_id):
 
     perfil = usuario_servicio.obtener_perfil(usuario_id)
 
-    if not perfil:
-
-        return jsonify({
-
-            'success': False,
-
-            'error': {'message': 'Perfil no encontrado.'}
-
-        }), 404
-
     return jsonify({
 
         'success': True,
@@ -122,6 +101,8 @@ def obtener_perfil(usuario_id):
         'data': perfil,
 
     }), 200
+
+
 
 
 @usuarios_bp.route('/perfil', methods=['PATCH'])
@@ -161,3 +142,30 @@ def actualizar_perfil(usuario_id):
         'data': perfil,
 
     }), 200
+
+# ============================================================
+
+# Blueprint de administracion
+
+# ============================================================
+
+@admin_bp.route('/usuarios', methods=['GET'])
+
+@requiere_admin
+
+def listar_usuarios(usuario_id):
+
+    """Listar todos los usuarios del sistema (solo admin)."""
+
+    lista = usuario_servicio.listar_todos_los_usuarios()
+
+    return jsonify({
+
+        'success': True,
+
+        'message': 'Lista de usuarios.',
+
+        'data': lista,
+
+    }), 200
+

@@ -18,6 +18,21 @@ class UsuarioRepositorio:
         db.session.commit()
 
         return usuario
+    
+    @staticmethod
+
+    def listar_todos():
+
+        return db.session.query(Usuario).all()
+
+    
+
+    @staticmethod
+
+    def actualizar_usuario():
+
+        db.session.commit()
+
 
     @staticmethod
 

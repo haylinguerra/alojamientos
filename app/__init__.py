@@ -70,7 +70,11 @@ def create_app():
         jwt_exp_minutes=app.config.get('JWT_EXP_MINUTES', 15),
 
     )
+    # Registrar blueprint de usuarios
 
+    from app.dominios.usuarios.controladores import usuarios_bp, admin_bp
+
+    app.register_blueprint(admin_bp, url_prefix=f'/api/{API_VERSION}/admin')
     app.register_blueprint(usuarios_bp, url_prefix=f'/api/{API_VERSION}/usuarios')
 
     # Manejadores globales de error
@@ -97,7 +101,16 @@ def create_app():
 
         UsuarioNoEncontradoError,
 
+        PermisoDenegadoError,
+
     )
+
+    @app.errorhandler(PermisoDenegadoError)
+    
+    def permiso_denegado(error):
+
+        return {"success": False, "error": {"message": str(error)}}, 403
+
 
     @app.errorhandler(CorreoYaRegistradoError)
 
