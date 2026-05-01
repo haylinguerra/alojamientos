@@ -73,7 +73,17 @@ def create_app():
     # Registrar blueprint de usuarios
 
     from app.dominios.usuarios.controladores import usuarios_bp, admin_bp
+    # Registrar blueprint de alojamientos
 
+    from app.dominios.alojamientos.controladores import alojamientos_bp
+
+    from app.dominios.alojamientos.servicios import AlojamientoServicio
+
+    from app.dominios.alojamientos import controladores as alojamientos_ctrl
+
+    alojamientos_ctrl.alojamiento_servicio = AlojamientoServicio()
+
+    app.register_blueprint(alojamientos_bp, url_prefix=f'/api/{API_VERSION}/alojamientos')
     app.register_blueprint(admin_bp, url_prefix=f'/api/{API_VERSION}/admin')
     app.register_blueprint(usuarios_bp, url_prefix=f'/api/{API_VERSION}/usuarios')
 
@@ -102,11 +112,18 @@ def create_app():
         UsuarioNoEncontradoError,
 
         PermisoDenegadoError,
-
+        
     )
 
-    @app.errorhandler(PermisoDenegadoError)
+    from app.dominios.alojamientos.servicios import AlojamientoNoEncontradoError
+
+    @app.errorhandler(AlojamientoNoEncontradoError)
     
+    def alojamiento_no_encontrado(error):
+        return {"success": False, "error": {"message": str(error)}}, 404
+
+    @app.errorhandler(PermisoDenegadoError)
+
     def permiso_denegado(error):
 
         return {"success": False, "error": {"message": str(error)}}, 403
